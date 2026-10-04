@@ -1,0 +1,87 @@
+services:
+  # ----------------------------------------------------------------------------
+  # PostgreSQL Database Service
+  # ----------------------------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: demandsense-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-demandsense}
+      POSTGRES_USER: ${POSTGRES_USER:-demandsense_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-demandsense_password}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-demandsense_user} -d ${POSTGRES_DB:-demandsense}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - demandsense-network
+
+  # ----------------------------------------------------------------------------
+  # FastAPI Backend Service
+  # ----------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: demandsense-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - DEBUG=${DEBUG:-True}
+      - PROJECT_NAME=${PROJECT_NAME:-DemandSense}
+      - BACKEND_HOST=0.0.0.0
+      - BACKEND_PORT=8000
+      - API_V1_STR=${API_V1_STR:-/api/v1}
+      - SECRET_KEY=${SECRET_KEY:-default_insecure_key_for_dev_only}
+      - CORS_ORIGINS=${CORS_ORIGINS:-["http://localhost:5173","http://localhost:3000"]}
+      - POSTGRES_SERVER=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=${POSTGRES_DB:-demandsense}
+      - POSTGRES_USER=${POSTGRES_USER:-demandsense_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-demandsense_password}
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - ./backend:/app
+      - ./data:/app/data:ro
+    networks:
+      - demandsense-network
+
+  # ----------------------------------------------------------------------------
+  # React Frontend Service
+  # ----------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: demandsense-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000/api/v1
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - demandsense-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  demandsense-network:
+    driver: bridge
