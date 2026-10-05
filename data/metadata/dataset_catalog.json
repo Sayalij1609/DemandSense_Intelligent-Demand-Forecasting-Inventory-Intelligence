@@ -1,0 +1,204 @@
+{
+  "project": "DemandSense",
+  "phase": "Phase 1 - Data Acquisition, Dataset Analysis & Unified Dataset Construction",
+  "generated_at": "2026-10-05T09:15:00Z",
+  "source_directory": "data/raw/kaggle",
+  "total_datasets_evaluated": 10,
+  "datasets": [
+    {
+      "filename": "retail_store_inventory.csv",
+      "business_role": "sales_and_inventory",
+      "status": "SELECTED_AS_PRIMARY",
+      "selection_rationale": "Perfect balanced panel dataset with 73,100 daily records across 5 stores and 20 products for 731 continuous days (2022-01-01 to 2024-01-01). Contains real units sold, unit prices, discounts, promotion flags, weather, and competitor prices.",
+      "granularity": "daily_store_product",
+      "total_rows": 73100,
+      "total_columns": 15,
+      "date_range": {
+        "start": "2022-01-01",
+        "end": "2024-01-01",
+        "total_days": 731
+      },
+      "entity_counts": {
+        "stores": 5,
+        "products": 20,
+        "categories": 5,
+        "regions": 4
+      },
+      "target_variable_candidate": "Units Sold",
+      "compatibility_with_primary": "SELF",
+      "join_status": "BASE_DATASET"
+    },
+    {
+      "filename": "customer_shopping_data.csv",
+      "business_role": "transactions",
+      "status": "EVALUATED_INCOMPATIBLE",
+      "selection_rationale": "Contains 99,457 retail invoice records from Istanbul shopping malls (2021-2023). However, it lacks product-level identifiers (only category names) and store identifiers are distinct Turkish shopping malls. Cannot be joined with SKU-level retail store panel without fabricating fake identifiers.",
+      "granularity": "transaction_invoice",
+      "total_rows": 99457,
+      "total_columns": 10,
+      "date_range": {
+        "start": "2021-01-01",
+        "end": "2023-03-08"
+      },
+      "entity_counts": {
+        "malls": 10,
+        "categories": 8,
+        "customers": 50000
+      },
+      "compatibility_with_primary": "INCOMPATIBLE",
+      "join_status": "EXCLUDED_FROM_PRIMARY_INTEGRATION"
+    },
+    {
+      "filename": "online-retail-dataset.csv",
+      "business_role": "ecommerce_transactions",
+      "status": "EVALUATED_INCOMPATIBLE",
+      "selection_rationale": "UCI Machine Learning Online Retail dataset containing 541,909 giftware transactions from 2010 to 2011 in the UK. Timeframe (2010-2011) does not overlap with 2022-2024 panel, and product catalog (StockCodes) and non-store structure are incompatible with physical retail stores.",
+      "granularity": "transaction_line",
+      "total_rows": 541909,
+      "total_columns": 8,
+      "date_range": {
+        "start": "2010-12-01",
+        "end": "2011-12-09"
+      },
+      "entity_counts": {
+        "stock_codes": 2879,
+        "customers": 1039,
+        "countries": 24
+      },
+      "compatibility_with_primary": "INCOMPATIBLE",
+      "join_status": "EXCLUDED_FROM_PRIMARY_INTEGRATION"
+    },
+    {
+      "filename": "export.csv",
+      "business_role": "wholesale_distribution",
+      "status": "EVALUATED_INCOMPATIBLE",
+      "selection_rationale": "Montgomery County Maryland Department of Liquor Control dataset containing 341,037 monthly liquor warehouse and retail transfer records across only 4 calendar months (2020-06 to 2020-09). Incompatible granularity (monthly vs daily) and domain (county liquor monopoly vs retail products).",
+      "granularity": "monthly_item",
+      "total_rows": 341037,
+      "total_columns": 9,
+      "date_range": {
+        "start": "2020-06",
+        "end": "2020-09"
+      },
+      "entity_counts": {
+        "items": 21593,
+        "suppliers": 434
+      },
+      "compatibility_with_primary": "INCOMPATIBLE",
+      "join_status": "EXCLUDED_FROM_PRIMARY_INTEGRATION"
+    },
+    {
+      "filename": "retail_sales_dataset.csv",
+      "business_role": "customer_transactions",
+      "status": "EVALUATED_INCOMPATIBLE",
+      "selection_rationale": "Customer demographic purchase log with 4,310 transaction rows across Indian cities from 2020 to 2024. Product names are generic ('Sugar', 'T-shirt') and no store IDs exist. Extremely sparse (1-2 records per day nationally). Cannot be joined with SKU-store panel.",
+      "granularity": "transaction_order",
+      "total_rows": 4310,
+      "total_columns": 21,
+      "date_range": {
+        "start": "2020-01-01",
+        "end": "2024-12-30"
+      },
+      "entity_counts": {
+        "orders": 4200,
+        "customers": 4112,
+        "cities": 20
+      },
+      "compatibility_with_primary": "INCOMPATIBLE",
+      "join_status": "EXCLUDED_FROM_PRIMARY_INTEGRATION"
+    },
+    {
+      "filename": "data.csv",
+      "business_role": "b2b_orders",
+      "status": "EVALUATED_INCOMPATIBLE",
+      "selection_rationale": "Australian B2B commercial office supplies and furniture order log with 5,000 rows spanning 2013-2017. Outdated timeframe, B2B wholesale granularity, and distinct Australian geography make it incompatible with the primary dataset.",
+      "granularity": "order_line",
+      "total_rows": 5000,
+      "total_columns": 24,
+      "date_range": {
+        "start": "2013-01-05",
+        "end": "2017-10-01"
+      },
+      "entity_counts": {
+        "orders": 1435,
+        "customers": 789,
+        "cities": 2
+      },
+      "compatibility_with_primary": "INCOMPATIBLE",
+      "join_status": "EXCLUDED_FROM_PRIMARY_INTEGRATION"
+    },
+    {
+      "filename": "amazon.csv",
+      "business_role": "product_reviews_and_catalog",
+      "status": "EVALUATED_INCOMPATIBLE",
+      "selection_rationale": "Amazon India consumer electronics and home accessories product catalog with 1,465 reviews and rating metrics. Has no sales volume, no store dimension, no time-series timestamps, and uses Amazon ASIN identifiers rather than retail SKUs.",
+      "granularity": "product_catalog",
+      "total_rows": 1465,
+      "total_columns": 16,
+      "date_range": null,
+      "entity_counts": {
+        "products": 1351,
+        "categories": 211
+      },
+      "compatibility_with_primary": "INCOMPATIBLE",
+      "join_status": "EXCLUDED_FROM_PRIMARY_INTEGRATION"
+    },
+    {
+      "filename": "P  L March 2021.csv",
+      "business_role": "pricing_and_margin_catalog",
+      "status": "EVALUATED_INCOMPATIBLE",
+      "selection_rationale": "Static e-commerce cross-marketplace MRP pricing comparison matrix for 1,330 Indian ethnic wear SKUs in March 2021. Contains no time series, no demand figures, and no physical store dimensions.",
+      "granularity": "sku_pricing_snapshot",
+      "total_rows": 1330,
+      "total_columns": 18,
+      "date_range": null,
+      "entity_counts": {
+        "skus": 1330,
+        "styles": 254,
+        "catalogs": 9
+      },
+      "compatibility_with_primary": "INCOMPATIBLE",
+      "join_status": "EXCLUDED_FROM_PRIMARY_INTEGRATION"
+    },
+    {
+      "filename": "Sales Dataset.csv",
+      "business_role": "customer_orders",
+      "status": "EVALUATED_INCOMPATIBLE",
+      "selection_rationale": "Small e-commerce transactional dataset with 1,194 orders across 18 US cities (2020-2025). Lacks SKU identifiers (only 12 sub-categories) and physical store IDs. Transactions are too sparse for continuous time-series modeling.",
+      "granularity": "order",
+      "total_rows": 1194,
+      "total_columns": 12,
+      "date_range": {
+        "start": "2020-03-22",
+        "end": "2025-03-15"
+      },
+      "entity_counts": {
+        "orders": 547,
+        "sub_categories": 12,
+        "cities": 18
+      },
+      "compatibility_with_primary": "INCOMPATIBLE",
+      "join_status": "EXCLUDED_FROM_PRIMARY_INTEGRATION"
+    },
+    {
+      "filename": "sales_data.csv",
+      "business_role": "sales_rep_orders",
+      "status": "EVALUATED_INCOMPATIBLE",
+      "selection_rationale": "Small B2B enterprise sales log with 1,000 order transactions logged by 5 sales reps in 2023. Contains numeric Product_IDs (1001-1100), but has no store IDs and sparse transactions per product (approx. 10 transactions per product across an entire year).",
+      "granularity": "transaction_order",
+      "total_rows": 1000,
+      "total_columns": 14,
+      "date_range": {
+        "start": "2023-01-01",
+        "end": "2024-01-01"
+      },
+      "entity_counts": {
+        "products": 100,
+        "sales_reps": 5,
+        "regions": 4
+      },
+      "compatibility_with_primary": "INCOMPATIBLE",
+      "join_status": "EXCLUDED_FROM_PRIMARY_INTEGRATION"
+    }
+  ]
+}

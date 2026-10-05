@@ -1,0 +1,80 @@
+{
+  "project": "DemandSense",
+  "phase": "Phase 1 - Data Acquisition & Integration",
+  "random_seed": 42,
+  "documentation": "Traceability catalog distinguishing real Kaggle source fields from synthetic supporting dimensions.",
+  "synthetic_fields": {
+    "supplier_lead_time": {
+      "canonical_name": "supplier_lead_time",
+      "source": "synthetic",
+      "data_type": "integer",
+      "unit": "days",
+      "reason": "Kaggle source dataset contains no supplier lead-time column. Lead times are mandatory for safety stock and reorder point calculations.",
+      "generation_method": "Category-bounded baseline assignment per product SKU with deterministic operational variance (+/- 1 day) during extreme weather/holiday peaks.",
+      "parameters": {
+        "random_seed": 42,
+        "base_lead_times_by_category": {
+          "Groceries": 3,
+          "Clothing": 5,
+          "Toys": 7,
+          "Electronics": 9,
+          "Furniture": 14
+        },
+        "variance_distribution": "bounded discrete [-1, 0, +1] based on weather and holiday stress",
+        "min_lead_time": 2,
+        "max_lead_time": 16
+      }
+    },
+    "inventory_level": {
+      "canonical_name": "inventory_level",
+      "source": "synthetic",
+      "data_type": "integer",
+      "unit": "units",
+      "reason": "Although Kaggle provides an 'Inventory Level' column, empirical audit revealed it was generated independently and violates the fundamental conservation of inventory (I_t != I_{t-1} - S_t + R_t). A physically coupled simulation is required to support realistic stockout and overstock risk intelligence.",
+      "generation_method": "Physical multi-echelon inventory flow simulation obeying I_t = max(0, I_{t-1} - Units_Sold_t + Replenishment_Arrived_t). When inventory drops below Reorder Point (ROP = Lead_Time * Mean_Demand + Safety_Stock), a replenishment order is dispatched and arrives after supplier_lead_time days. Raw Kaggle inventory is preserved intact in 'raw_inventory_level'.",
+      "parameters": {
+        "random_seed": 42,
+        "service_level": 0.95,
+        "safety_factor_z": 1.645,
+        "review_period": "daily",
+        "backorders_allowed": false,
+        "stockout_truncation": true
+      }
+    },
+    "holiday": {
+      "canonical_name": "holiday",
+      "source": "synthetic_derived",
+      "data_type": "integer",
+      "unit": "binary flag (0/1)",
+      "reason": "The raw Kaggle dataset combines Holiday and Promotion into a single 'Holiday/Promotion' flag. Separating calendar holidays from promotional campaigns enables distinct price elasticity and seasonal impact modeling.",
+      "generation_method": "Deterministic calendar mapping to standard statutory national holidays (New Year's Day, Martin Luther King Jr. Day, Memorial Day, Juneteenth, Independence Day, Labor Day, Thanksgiving, Christmas) over 2022-01-01 to 2024-01-01. Raw promotion flag is preserved in 'promotion'.",
+      "parameters": {
+        "calendar_standard": "US_Federal",
+        "holiday_window": "exact_date_plus_eve"
+      }
+    },
+    "reorder_point": {
+      "canonical_name": "reorder_point",
+      "source": "synthetic_derived",
+      "data_type": "integer",
+      "unit": "units",
+      "reason": "Ground-truth benchmark operational threshold for inventory replenishment evaluation.",
+      "generation_method": "Computed as ROP = (Lead_Time * Historical_Mean_Demand) + Safety_Stock.",
+      "parameters": {
+        "service_level": 0.95
+      }
+    },
+    "safety_stock": {
+      "canonical_name": "safety_stock",
+      "source": "synthetic_derived",
+      "data_type": "integer",
+      "unit": "units",
+      "reason": "Ground-truth benchmark buffer stock for stockout risk evaluation.",
+      "generation_method": "Computed as SS = Z * sqrt(Lead_Time * Var_Demand + Mean_Demand^2 * Var_Lead_Time).",
+      "parameters": {
+        "service_level": 0.95,
+        "z_score": 1.645
+      }
+    }
+  }
+}

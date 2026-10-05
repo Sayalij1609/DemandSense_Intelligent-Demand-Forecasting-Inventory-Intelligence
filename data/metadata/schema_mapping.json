@@ -1,0 +1,148 @@
+{
+  "mappings": [
+    {
+      "source_dataset": "retail_store_inventory.csv",
+      "source_column": "Date",
+      "canonical_column": "date",
+      "transformation": "ISO-8601 date parse (YYYY-MM-DD)",
+      "data_type": "date",
+      "notes": "Primary temporal index covering 2022-01-01 to 2024-01-01"
+    },
+    {
+      "source_dataset": "retail_store_inventory.csv",
+      "source_column": "Product ID",
+      "canonical_column": "product_id",
+      "transformation": "direct mapping (strip whitespace)",
+      "data_type": "string",
+      "notes": "Primary SKU identifier (P0001 - P0020)"
+    },
+    {
+      "source_dataset": "retail_store_inventory.csv",
+      "source_column": "Store ID",
+      "canonical_column": "store_id",
+      "transformation": "direct mapping (strip whitespace)",
+      "data_type": "string",
+      "notes": "Primary physical store location identifier (S001 - S005)"
+    },
+    {
+      "source_dataset": "retail_store_inventory.csv",
+      "source_column": "Category",
+      "canonical_column": "category",
+      "transformation": "direct mapping",
+      "data_type": "string",
+      "notes": "Merchandise category (Groceries, Toys, Electronics, Furniture, Clothing)"
+    },
+    {
+      "source_dataset": "retail_store_inventory.csv",
+      "source_column": "Region",
+      "canonical_column": "region",
+      "transformation": "direct mapping",
+      "data_type": "string",
+      "notes": "Geographic territory (North, South, West, East)"
+    },
+    {
+      "source_dataset": "retail_store_inventory.csv",
+      "source_column": "Units Sold",
+      "canonical_column": "units_sold",
+      "transformation": "cast to float64/int64",
+      "data_type": "integer",
+      "notes": "Primary demand target variable (historical actual sales volume)"
+    },
+    {
+      "source_dataset": "retail_store_inventory.csv",
+      "source_column": "Price",
+      "canonical_column": "unit_price",
+      "transformation": "cast to float64, rounded to 2 decimals",
+      "data_type": "float",
+      "notes": "Unit retail selling price ($)"
+    },
+    {
+      "source_dataset": "retail_store_inventory.csv",
+      "source_column": "Discount",
+      "canonical_column": "discount",
+      "transformation": "cast to float64 (percentage / 100.0)",
+      "data_type": "float",
+      "notes": "Promotional discount rate (0.00 to 0.20)"
+    },
+    {
+      "source_dataset": "retail_store_inventory.csv",
+      "source_column": "Holiday/Promotion",
+      "canonical_column": "promotion",
+      "transformation": "cast to integer binary flag (0 or 1)",
+      "data_type": "integer",
+      "notes": "Promotional campaign indicator from raw Kaggle dataset"
+    },
+    {
+      "source_dataset": "calendar_generator",
+      "source_column": "date",
+      "canonical_column": "holiday",
+      "transformation": "calendar holiday mapping (US federal holidays)",
+      "data_type": "integer",
+      "notes": "Binary indicator of major public holidays (New Year, Memorial Day, July 4, Labor Day, Thanksgiving, Christmas)"
+    },
+    {
+      "source_dataset": "inventory_flow_simulation",
+      "source_column": "simulated_on_hand",
+      "canonical_column": "inventory_level",
+      "transformation": "dynamic inventory balance equation with lead-time pipeline orders",
+      "data_type": "integer",
+      "notes": "Physically realistic, demand-coupled inventory level obeying inventory conservation (raw snapshot preserved in raw_inventory_level)"
+    },
+    {
+      "source_dataset": "retail_store_inventory.csv",
+      "source_column": "Inventory Level",
+      "canonical_column": "raw_inventory_level",
+      "transformation": "direct preservation of raw Kaggle value",
+      "data_type": "integer",
+      "notes": "Preserves original uncoupled Kaggle inventory snapshot for auditability"
+    },
+    {
+      "source_dataset": "supplier_catalog_assignment",
+      "source_column": "lead_time_days",
+      "canonical_column": "supplier_lead_time",
+      "transformation": "category-bounded supplier lead time assignment with subtle operational variance",
+      "data_type": "integer",
+      "notes": "Lead time in days required for replenishment from supplier to store"
+    },
+    {
+      "source_dataset": "retail_store_inventory.csv",
+      "source_column": "Weather Condition",
+      "canonical_column": "weather",
+      "transformation": "standardize casing (lowercase string)",
+      "data_type": "string",
+      "notes": "Local weather condition (sunny, rainy, cloudy, snowy)"
+    },
+    {
+      "source_dataset": "retail_store_inventory.csv",
+      "source_column": "Competitor Pricing",
+      "canonical_column": "competitor_price",
+      "transformation": "cast to float64, rounded to 2 decimals",
+      "data_type": "float",
+      "notes": "Competitor market price for similar product ($)"
+    },
+    {
+      "source_dataset": "retail_store_inventory.csv",
+      "source_column": "Seasonality",
+      "canonical_column": "seasonality",
+      "transformation": "standardize casing",
+      "data_type": "string",
+      "notes": "Seasonal cycle (Spring, Summer, Autumn, Winter)"
+    },
+    {
+      "source_dataset": "retail_store_inventory.csv",
+      "source_column": "Units Ordered",
+      "canonical_column": "raw_units_ordered",
+      "transformation": "cast to integer",
+      "data_type": "integer",
+      "notes": "Preserved raw units ordered from source dataset"
+    },
+    {
+      "source_dataset": "retail_store_inventory.csv",
+      "source_column": "Demand Forecast",
+      "canonical_column": "raw_demand_forecast",
+      "transformation": "cast to float64",
+      "data_type": "float",
+      "notes": "Preserved baseline benchmark forecast provided in Kaggle data"
+    }
+  ]
+}
